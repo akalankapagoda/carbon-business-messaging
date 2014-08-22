@@ -26,6 +26,10 @@
 
     <plugin-directory>${ANDES_HOME}/lib/plugins</plugin-directory>
     <cache-directory>${QPID_WORK}/cache</cache-directory>
+
+    <stats>
+        <enabled>true</enabled>
+    </stats>
     
     <connector>
         <!-- To enable SSL edit the keystorePath and keystorePassword

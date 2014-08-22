@@ -46,6 +46,7 @@
                 <module>org.wso2.carbon.andes.core</module>
                 <module>org.wso2.carbon.andes.admin</module>
                 <module>org.wso2.carbon.andes.ui</module>
+                <module>org.wso2.carbon.andes.stats</module>
 
             </modules>
 

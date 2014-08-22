@@ -113,5 +113,41 @@
             <icon>../queues/images/list.gif</icon>
             <require-permission>/permission/admin/manage/subscriptions/topicSubscription</require-permission>
         </menu>
+        <menu>
+            <id>stats_main</id>
+            <i18n-key>stats.main.menu</i18n-key>
+            <i18n-bundle>org.wso2.carbon.andes.ui.i18n.Resources</i18n-bundle>
+            <parent-menu>monitor_menu</parent-menu>
+            <link>#</link>
+            <region>region4</region>
+            <order>52</order>
+            <style-class>manage</style-class>
+            <icon>../stats/images/stats_main.jpg</icon>
+            <require-permission>/permission/admin/manage/subscriptions/topicSubscription</require-permission>
+        </menu>
+        <menu>
+            <id>stats_rate</id>
+            <i18n-key>stats.rate.menu</i18n-key>
+            <i18n-bundle>org.wso2.carbon.andes.ui.i18n.Resources</i18n-bundle>
+            <parent-menu>stats_main</parent-menu>
+            <link>../stats/message_rate.jsp</link>
+            <region>region4</region>
+            <order>53</order>
+            <style-class>manage</style-class>
+            <icon>../stats/images/stats_rate.jpg</icon>
+            <require-permission>/permission/admin/manage/subscriptions/topicSubscription</require-permission>
+        </menu>
+        <menu>
+            <id>stats_message_status</id>
+            <i18n-key>stats.status.menu</i18n-key>
+            <i18n-bundle>org.wso2.carbon.andes.ui.i18n.Resources</i18n-bundle>
+            <parent-menu>stats_main</parent-menu>
+            <link>../stats/message_status.jsp</link>
+            <region>region4</region>
+            <order>54</order>
+            <style-class>manage</style-class>
+            <icon>../stats/images/stats_status.jpg</icon>
+            <require-permission>/permission/admin/manage/subscriptions/topicSubscription</require-permission>
+        </menu>
 	</menus>
 </component>

@@ -1,0 +1,184 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://wso2.org/carbon/andes/admin/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="http://wso2.org/carbon/andes/admin" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://wso2.org/carbon/andes/admin">
+    <wsdl:documentation>MessageCounterService</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://wso2.org/carbon/andes/admin/xsd">
+            <xs:element name="isStatsEnabled">
+                <xs:complexType>
+                    <xs:sequence></xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="isStatsEnabledResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getMessageStatuses">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="minDate" type="xs:long"></xs:element>
+                        <xs:element minOccurs="0" name="maxDate" type="xs:long"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getMessageStatusesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getGraphDataForRate">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="minDate" type="xs:long"></xs:element>
+                        <xs:element minOccurs="0" name="maxDate" type="xs:long"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getGraphDataForRateResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="isStatsEnabledRequest">
+        <wsdl:part name="parameters" element="ns:isStatsEnabled"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="isStatsEnabledResponse">
+        <wsdl:part name="parameters" element="ns:isStatsEnabledResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getMessageStatusesRequest">
+        <wsdl:part name="parameters" element="ns:getMessageStatuses"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getMessageStatusesResponse">
+        <wsdl:part name="parameters" element="ns:getMessageStatusesResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getGraphDataForRateRequest">
+        <wsdl:part name="parameters" element="ns:getGraphDataForRate"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getGraphDataForRateResponse">
+        <wsdl:part name="parameters" element="ns:getGraphDataForRateResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="MessageCounterServicePortType">
+        <wsdl:operation name="isStatsEnabled">
+            <wsdl:input message="tns:isStatsEnabledRequest" wsaw:Action="urn:isStatsEnabled"></wsdl:input>
+            <wsdl:output message="tns:isStatsEnabledResponse" wsaw:Action="urn:isStatsEnabledResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageStatuses">
+            <wsdl:input message="tns:getMessageStatusesRequest" wsaw:Action="urn:getMessageStatuses"></wsdl:input>
+            <wsdl:output message="tns:getMessageStatusesResponse" wsaw:Action="urn:getMessageStatusesResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getGraphDataForRate">
+            <wsdl:input message="tns:getGraphDataForRateRequest" wsaw:Action="urn:getGraphDataForRate"></wsdl:input>
+            <wsdl:output message="tns:getGraphDataForRateResponse" wsaw:Action="urn:getGraphDataForRateResponse"></wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="MessageCounterServiceSoap11Binding" type="tns:MessageCounterServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap:binding>
+        <wsdl:operation name="isStatsEnabled">
+            <soap:operation soapAction="urn:isStatsEnabled" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageStatuses">
+            <soap:operation soapAction="urn:getMessageStatuses" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getGraphDataForRate">
+            <soap:operation soapAction="urn:getGraphDataForRate" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="MessageCounterServiceSoap12Binding" type="tns:MessageCounterServicePortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap12:binding>
+        <wsdl:operation name="isStatsEnabled">
+            <soap12:operation soapAction="urn:isStatsEnabled" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageStatuses">
+            <soap12:operation soapAction="urn:getMessageStatuses" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getGraphDataForRate">
+            <soap12:operation soapAction="urn:getGraphDataForRate" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="MessageCounterServiceHttpBinding" type="tns:MessageCounterServicePortType">
+        <http:binding verb="POST"></http:binding>
+        <wsdl:operation name="isStatsEnabled">
+            <http:operation location="isStatsEnabled"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageStatuses">
+            <http:operation location="getMessageStatuses"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getGraphDataForRate">
+            <http:operation location="getGraphDataForRate"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="MessageCounterService">
+        <wsdl:port name="MessageCounterServiceHttpsSoap11Endpoint" binding="tns:MessageCounterServiceSoap11Binding">
+            <soap:address location="https://10.100.5.147:9443/services/MessageCounterService.MessageCounterServiceHttpsSoap11Endpoint/"></soap:address>
+        </wsdl:port>
+        <wsdl:port name="MessageCounterServiceHttpsSoap12Endpoint" binding="tns:MessageCounterServiceSoap12Binding">
+            <soap12:address location="https://10.100.5.147:9443/services/MessageCounterService.MessageCounterServiceHttpsSoap12Endpoint/"></soap12:address>
+        </wsdl:port>
+        <wsdl:port name="MessageCounterServiceHttpsEndpoint" binding="tns:MessageCounterServiceHttpBinding">
+            <http:address location="https://10.100.5.147:9443/services/MessageCounterService.MessageCounterServiceHttpsEndpoint/"></http:address>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

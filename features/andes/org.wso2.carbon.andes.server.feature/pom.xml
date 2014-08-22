@@ -70,6 +70,11 @@
             <version>4.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.andes.stats</artifactId>
+            <version>4.3.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.andes.wso2</groupId>
             <artifactId>andes</artifactId>
             <version>3.0.0-SNAPSHOT</version>
@@ -188,7 +193,8 @@
                                 <bundleDef>org.wso2.carbon:org.wso2.carbon.andes</bundleDef>
                                 <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.commons</bundleDef>
 				 <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.core</bundleDef>
-				<bundleDef>org.wso2.carbon:org.wso2.carbon.andes.admin</bundleDef>                              
+				<bundleDef>org.wso2.carbon:org.wso2.carbon.andes.admin</bundleDef>
+                                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.stats</bundleDef>
                                 <bundleDef>org.wso2.andes.wso2:andes</bundleDef>
                                 <bundleDef>com.googlecode.disruptor.wso2:disruptor</bundleDef>                               
                                 <bundleDef>com.datastax.cassandra.wso2:cql-driver</bundleDef>                               

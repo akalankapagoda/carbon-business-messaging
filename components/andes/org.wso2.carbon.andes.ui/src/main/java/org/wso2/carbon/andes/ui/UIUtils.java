@@ -23,7 +23,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.wso2.carbon.CarbonConstants;
+import org.wso2.carbon.event.stub.internal.TopicManagerAdminServiceStub;
 import org.wso2.carbon.andes.stub.AndesAdminServiceStub;
+import org.wso2.carbon.andes.stats.stub.MessageCounterServiceStub;
 import org.wso2.carbon.andes.stub.admin.types.Queue;
 import org.wso2.carbon.andes.stub.admin.types.Subscription;
 import org.wso2.carbon.andes.ui.client.QueueReceiverClient;
@@ -54,6 +56,8 @@ public class UIUtils {
     private static final String QPID_CONF_SSL_KEYSTORE_PASSWORD = "keystorePassword";
     private static final String QPID_CONF_SSL_TRUSTSTORE_PATH = "truststorePath";
     private static final String QPID_CONF_SSL_TRUSTSTORE_PASSWORD = "truststorePassword";
+    private static final String STATS = "stats";
+    private static final String ENABLED = "enabled";
 
 
     public static String getHtmlString(String message) {
@@ -79,6 +83,43 @@ public class UIUtils {
 
         return stub;
     }
+
+    public static MessageCounterServiceStub getMessageCounterServiceStub(ServletConfig config,
+                                                                 HttpSession session,
+                                                                 HttpServletRequest request)
+            throws AxisFault {
+        String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
+        backendServerURL = backendServerURL + "MessageCounterService";
+        ConfigurationContext configContext =
+                (ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
+        MessageCounterServiceStub stub = new MessageCounterServiceStub(configContext,backendServerURL);
+        String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
+        if (cookie != null) {
+            Options option = stub._getServiceClient().getOptions();
+            option.setManageSession(true);
+            option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
+        }
+        return stub;
+    }
+
+    public static TopicManagerAdminServiceStub getTopicManagerAdminServiceStub(ServletConfig config,
+                                                                 HttpSession session,
+                                                                 HttpServletRequest request)
+            throws AxisFault {
+        String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
+        backendServerURL = backendServerURL + "TopicManagerAdminService.TopicManagerAdminServiceHttpsSoap12Endpoint";
+        ConfigurationContext configContext =
+                (ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
+        TopicManagerAdminServiceStub stub = new TopicManagerAdminServiceStub(configContext,backendServerURL);
+        String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
+        if (cookie != null) {
+            Options option = stub._getServiceClient().getOptions();
+            option.setManageSession(true);
+            option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
+        }
+        return stub;
+    }
+
 
     /**
      * filter the full queue list to suit the range

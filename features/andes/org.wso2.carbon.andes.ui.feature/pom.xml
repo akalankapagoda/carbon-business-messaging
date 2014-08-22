@@ -109,6 +109,7 @@
 				<bundleDef>org.wso2.carbon:org.wso2.carbon.andes.cluster.mgt.ui</bundleDef>
 				<bundleDef>org.wso2.carbon:org.wso2.carbon.andes.mgt.stub</bundleDef>
 				<bundleDef>org.wso2.carbon:org.wso2.carbon.andes.stub</bundleDef>
+                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.stats.stub</bundleDef>
 				<bundleDef>org.wso2.carbon:org.wso2.carbon.andes.ui</bundleDef>
                             </bundles>
                             <importFeatures>
