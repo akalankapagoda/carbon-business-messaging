@@ -4,9 +4,6 @@
 <%
      String selectedQueue = request.getParameter("selectedQueue");
      String selectedDuration = request.getParameter("selectedDuration");
-     Long minMessageId = Long.parseLong(request.getParameter("minMessageId"));
-     Long limit = Long.parseLong(request.getParameter("limit"));
-     Boolean compareAllStatuses = Boolean.parseBoolean(request.getParameter("compareAllStatuses"));
 
      if (selectedQueue != null) {
          session.setAttribute( "rateQueueName", selectedQueue );
@@ -36,8 +33,8 @@
 
         minDate = calendar.getTimeInMillis();
 
-         out.print(stub.getMessageStatuses(selectedQueue, minDate, maxDate, minMessageId, limit, compareAllStatuses));
+         out.print(stub.getMessageStatusCount(selectedQueue, minDate, maxDate));
      } else {
-        out.print("[]");
+        out.print("0");
      }
 %>

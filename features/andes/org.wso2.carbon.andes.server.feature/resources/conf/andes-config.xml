@@ -29,6 +29,10 @@
 
     <stats>
         <enabled>true</enabled>
+
+        <!-- The message stats valid time in seconds. After the time period expired
+         the records will be deleted.-->
+        <timeToLive>259200</timeToLive>
     </stats>
     
     <connector>

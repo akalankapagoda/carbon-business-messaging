@@ -10,6 +10,7 @@
 <script src="../yui/build/connection/connection-min.js" type="text/javascript"></script>
 <!--Local js includes-->
 <script src="js/stats.js" type="text/javascript"></script>
+<script src="js/paging.js" type="text/javascript"></script>
 
 <!DOCTYPE html>
 <html>
@@ -35,7 +36,7 @@ if(stub.isStatsEnabled()) {
 
 %>
 
-<body onload="loadMessageStatuses();">
+<body onload="statusInitializeAndLoad();">
 
 <h1>Message Statuses</h1>
 <br>
@@ -50,13 +51,14 @@ if(stub.isStatsEnabled()) {
     } else {
 %>
 
-Choose the Queue : <select id="queueSelect" onchange="loadMessageStatuses()">
+Choose the Queue : <select id="queueSelect" onchange="statusInitializeAndLoad()">
 <option value="All">All</option>
 <%
-
-        for (Queue queue : queueList) {
-            String queueName = queue.getQueueName();
-            out.println("<option value=" + queueName + ">" + queueName + "</option>");
+        if (queueList != null ) {
+            for (Queue queue : queueList) {
+                String queueName = queue.getQueueName();
+                out.println("<option value=" + queueName + ">" + queueName + "</option>");
+            }
         }
 
             Stack stack = new Stack();
@@ -81,7 +83,7 @@ Choose the Queue : <select id="queueSelect" onchange="loadMessageStatuses()">
 </select>
 
 
-Choose duration : <select id="durationSelect" onchange="loadMessageStatuses()">
+Choose duration : <select id="durationSelect" onchange="statusInitializeAndLoad()">
 <option value="lastMinute">Last Minute</option>
 <option value="last10Minute">Last 10 Minutes</option>
 <option value="lastHour">Last Hour</option>
@@ -94,9 +96,17 @@ Choose duration : <select id="durationSelect" onchange="loadMessageStatuses()">
 
 <br>
 
+<p id="countLabel"></p>
+
+<br>
+
 <table class="tftable" id="tftable" border="1">
-<tr><th>Queue Name</th><th>Status</th><th>Message Published Time</th><th>Message Delivered Time</th><th>Message Acknowledged Time</th>
+<tr><th>Message Id</th><th>Queue Name</th><th>Status</th><th>Message Published Time</th><th>Message Delivered Time</th><th>Message Acknowledged Time</th>
 </table>
+
+<div id="pageNavPosition"></div>
+<button type="button" id="prevButton" disabled onclick="prevPage()">&#171 Prev</button>
+<button type="button" id="nextButton" onclick="nextPage(true)">Next &#187</button>
 
 <%
     }

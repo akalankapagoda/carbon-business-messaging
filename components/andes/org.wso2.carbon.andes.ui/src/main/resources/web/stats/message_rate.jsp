@@ -22,7 +22,6 @@
 
         <script type="text/javascript">
             var chart;
-            var chartData = [];
             var chartCursor;
 
             var publishChartData = [];
@@ -69,10 +68,11 @@ if (stub.isStatsEnabled()) {
 Choose the Queue : <select id="queueSelect" onchange="loadGraphData()">
 <option value="All">All</option>
 <%
-
-        for (Queue queue : queueList) {
-            String queueName = queue.getQueueName();
-            out.println("<option value=" + queueName + ">" + queueName + "</option>");
+        if (queueList != null ) {
+            for (Queue queue : queueList) {
+                String queueName = queue.getQueueName();
+                out.println("<option value=" + queueName + ">" + queueName + "</option>");
+            }
         }
 
             Stack stack = new Stack();

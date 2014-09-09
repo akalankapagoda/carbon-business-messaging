@@ -20,6 +20,9 @@
                         <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="minDate" type="xs:long"></xs:element>
                         <xs:element minOccurs="0" name="maxDate" type="xs:long"></xs:element>
+                        <xs:element minOccurs="0" name="minMessageId" type="xs:long"></xs:element>
+                        <xs:element minOccurs="0" name="limit" type="xs:long"></xs:element>
+                        <xs:element minOccurs="0" name="compareAllStatuses" type="xs:boolean"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -30,7 +33,7 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getGraphDataForRate">
+            <xs:element name="getMessageStatusCount">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
@@ -39,7 +42,26 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getGraphDataForRateResponse">
+            <xs:element name="getMessageStatusCountResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:long"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getMessageStatusChangeTimes">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="minDate" type="xs:long"></xs:element>
+                        <xs:element minOccurs="0" name="maxDate" type="xs:long"></xs:element>
+                        <xs:element minOccurs="0" name="minMessageId" type="xs:long"></xs:element>
+                        <xs:element minOccurs="0" name="limit" type="xs:long"></xs:element>
+                        <xs:element minOccurs="0" name="messageCounterTypeValue" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getMessageStatusChangeTimesResponse">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
@@ -48,6 +70,12 @@
             </xs:element>
         </xs:schema>
     </wsdl:types>
+    <wsdl:message name="getMessageStatusChangeTimesRequest">
+        <wsdl:part name="parameters" element="ns:getMessageStatusChangeTimes"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getMessageStatusChangeTimesResponse">
+        <wsdl:part name="parameters" element="ns:getMessageStatusChangeTimesResponse"></wsdl:part>
+    </wsdl:message>
     <wsdl:message name="isStatsEnabledRequest">
         <wsdl:part name="parameters" element="ns:isStatsEnabled"></wsdl:part>
     </wsdl:message>
@@ -60,13 +88,17 @@
     <wsdl:message name="getMessageStatusesResponse">
         <wsdl:part name="parameters" element="ns:getMessageStatusesResponse"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="getGraphDataForRateRequest">
-        <wsdl:part name="parameters" element="ns:getGraphDataForRate"></wsdl:part>
+    <wsdl:message name="getMessageStatusCountRequest">
+        <wsdl:part name="parameters" element="ns:getMessageStatusCount"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="getGraphDataForRateResponse">
-        <wsdl:part name="parameters" element="ns:getGraphDataForRateResponse"></wsdl:part>
+    <wsdl:message name="getMessageStatusCountResponse">
+        <wsdl:part name="parameters" element="ns:getMessageStatusCountResponse"></wsdl:part>
     </wsdl:message>
     <wsdl:portType name="MessageCounterServicePortType">
+        <wsdl:operation name="getMessageStatusChangeTimes">
+            <wsdl:input message="tns:getMessageStatusChangeTimesRequest" wsaw:Action="urn:getMessageStatusChangeTimes"></wsdl:input>
+            <wsdl:output message="tns:getMessageStatusChangeTimesResponse" wsaw:Action="urn:getMessageStatusChangeTimesResponse"></wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="isStatsEnabled">
             <wsdl:input message="tns:isStatsEnabledRequest" wsaw:Action="urn:isStatsEnabled"></wsdl:input>
             <wsdl:output message="tns:isStatsEnabledResponse" wsaw:Action="urn:isStatsEnabledResponse"></wsdl:output>
@@ -75,15 +107,24 @@
             <wsdl:input message="tns:getMessageStatusesRequest" wsaw:Action="urn:getMessageStatuses"></wsdl:input>
             <wsdl:output message="tns:getMessageStatusesResponse" wsaw:Action="urn:getMessageStatusesResponse"></wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getGraphDataForRate">
-            <wsdl:input message="tns:getGraphDataForRateRequest" wsaw:Action="urn:getGraphDataForRate"></wsdl:input>
-            <wsdl:output message="tns:getGraphDataForRateResponse" wsaw:Action="urn:getGraphDataForRateResponse"></wsdl:output>
+        <wsdl:operation name="getMessageStatusCount">
+            <wsdl:input message="tns:getMessageStatusCountRequest" wsaw:Action="urn:getMessageStatusCount"></wsdl:input>
+            <wsdl:output message="tns:getMessageStatusCountResponse" wsaw:Action="urn:getMessageStatusCountResponse"></wsdl:output>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="MessageCounterServiceSoap11Binding" type="tns:MessageCounterServicePortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap:binding>
         <wsdl:operation name="isStatsEnabled">
             <soap:operation soapAction="urn:isStatsEnabled" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageStatusChangeTimes">
+            <soap:operation soapAction="urn:getMessageStatusChangeTimes" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -100,8 +141,8 @@
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getGraphDataForRate">
-            <soap:operation soapAction="urn:getGraphDataForRate" style="document"></soap:operation>
+        <wsdl:operation name="getMessageStatusCount">
+            <soap:operation soapAction="urn:getMessageStatusCount" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -121,6 +162,15 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getMessageStatusChangeTimes">
+            <soap12:operation soapAction="urn:getMessageStatusChangeTimes" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getMessageStatuses">
             <soap12:operation soapAction="urn:getMessageStatuses" style="document"></soap12:operation>
             <wsdl:input>
@@ -130,8 +180,8 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getGraphDataForRate">
-            <soap12:operation soapAction="urn:getGraphDataForRate" style="document"></soap12:operation>
+        <wsdl:operation name="getMessageStatusCount">
+            <soap12:operation soapAction="urn:getMessageStatusCount" style="document"></soap12:operation>
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
@@ -151,6 +201,15 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getMessageStatusChangeTimes">
+            <http:operation location="getMessageStatusChangeTimes"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getMessageStatuses">
             <http:operation location="getMessageStatuses"></http:operation>
             <wsdl:input>
@@ -160,8 +219,8 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getGraphDataForRate">
-            <http:operation location="getGraphDataForRate"></http:operation>
+        <wsdl:operation name="getMessageStatusCount">
+            <http:operation location="getMessageStatusCount"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
@@ -172,13 +231,13 @@
     </wsdl:binding>
     <wsdl:service name="MessageCounterService">
         <wsdl:port name="MessageCounterServiceHttpsSoap11Endpoint" binding="tns:MessageCounterServiceSoap11Binding">
-            <soap:address location="https://10.100.5.147:9443/services/MessageCounterService.MessageCounterServiceHttpsSoap11Endpoint/"></soap:address>
+            <soap:address location="https://127.0.0.1:9443/services/MessageCounterService.MessageCounterServiceHttpsSoap11Endpoint/"></soap:address>
         </wsdl:port>
         <wsdl:port name="MessageCounterServiceHttpsSoap12Endpoint" binding="tns:MessageCounterServiceSoap12Binding">
-            <soap12:address location="https://10.100.5.147:9443/services/MessageCounterService.MessageCounterServiceHttpsSoap12Endpoint/"></soap12:address>
+            <soap12:address location="https://127.0.0.1:9443/services/MessageCounterService.MessageCounterServiceHttpsSoap12Endpoint/"></soap12:address>
         </wsdl:port>
         <wsdl:port name="MessageCounterServiceHttpsEndpoint" binding="tns:MessageCounterServiceHttpBinding">
-            <http:address location="https://10.100.5.147:9443/services/MessageCounterService.MessageCounterServiceHttpsEndpoint/"></http:address>
+            <http:address location="https://127.0.0.1:9443/services/MessageCounterService.MessageCounterServiceHttpsEndpoint/"></http:address>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

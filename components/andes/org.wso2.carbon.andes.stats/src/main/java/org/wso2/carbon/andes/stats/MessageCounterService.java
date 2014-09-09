@@ -6,9 +6,7 @@ import org.wso2.andes.server.ClusterResourceHolder;
 import org.wso2.andes.server.stats.MessageCounter;
 import org.wso2.andes.server.stats.MessageCounterKey;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Map;
 
 /**
  * Created by Akalanka on 8/6/14.
@@ -18,75 +16,120 @@ import java.util.*;
 public class MessageCounterService {
 
     MessageCounter messageCounter = MessageCounter.getInstance();
-    private DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");   // ISO 8601 Standard Date Format to be retreived by web clients
-
-    /**
-     * Get data for message rate graph.
-     * @param queueName The queue name, if null all.
-     * @param minDate The min date.
-     * @param maxDate The max date
-     * @return Message rates JSON Array [{"Date":Long, "RatePublished":No.of.Msgs},{"Date":Long, "RateDelivered":No.of.Msgs},{"Date":Long, "RateAcknowledged":No.of.Msgs}]
-     */
-    public String getGraphDataForRate(String queueName, Long minDate, Long maxDate) {
-        String queueToRequest = null;
-        if (!"All".equals(queueName)) { // queueName null means All data
-            queueToRequest = queueName;
-        }
-        return messageCounter.getGraphData(queueToRequest, minDate, maxDate);
-    }
 
     /**
      * Get message status for each message in the given time range.
      * @param queueName The queue name, if null all.
      * @param minDate The min date.
      * @param maxDate The max date
-     * @return Message Statuses JSON Array [{"queue_Name":"queueName", "Published":"yyyy-MM-dd'T'HH:mm:ssZ", "Delivered": "yyyy-MM-dd'T'HH:mm:ssZ", "Acknowledged": "yyyy-MM-dd'T'HH:mm:ssZ", "message_status":"Acknowledged"}]
+     * @param minMessageId The message retrieval lower boundary.
+     * @param limit The amout of messages to retrieve.
+     * @param compareAllStatuses Compare all the status changes occured within the time period or compare only the published time.
+     * @return Message Statuses JSON Array [{"messageId":1234567890, "queue_Name":"queueName", "Published":timemillis, "Delivered": timemillis, "Acknowledged": timemillis}]
      */
-    public String getMessageStatuses(String queueName, Long minDate, Long maxDate) {
+    public String getMessageStatuses(String queueName, Long minDate, Long maxDate, Long minMessageId, Long limit, Boolean compareAllStatuses) {
 
         String queueToRequest = null;
         if (!"All".equals(queueName)) { // queueName null means All data
             queueToRequest = queueName;
         }
 
-        Map<Long, Map<String, String>> messageStatus = messageCounter.getOnGoingMessageStatus(queueToRequest, minDate, maxDate);
-        Iterator<Map<String,String>> iterator = messageStatus.values().iterator();
+        Map<Long, Map<String, String>> messageStatus = messageCounter.getOnGoingMessageStatus(queueToRequest, minDate, maxDate, minMessageId, limit, compareAllStatuses);
 
         JSONArray messageStatuses = new JSONArray();
 
 
-        while(iterator.hasNext()) {
-            Map<String, String> currentEntry = iterator.next();
-            Long publishedDate = Long.parseLong(currentEntry.get("Published"));
-            Long deliveredDate = Long.parseLong(currentEntry.get("Delivered"));
-            Long acknowledgedDate = Long.parseLong(currentEntry.get("Acknowledged"));
+        for(Map.Entry<Long,Map<String,String>> currentEntry : messageStatus.entrySet()) {
+            Long messageId = currentEntry.getKey();
+            Map<String,String> currentValues = currentEntry.getValue();
+            Long publishedDate = Long.parseLong(currentValues.get("Published")) / 1000 * 1000;
+            Long deliveredDate = Long.parseLong(currentValues.get("Delivered")) / 1000 * 1000;
+            Long acknowledgedDate = Long.parseLong(currentValues.get("Acknowledged")) / 1000 * 1000;
 
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("queue_name", currentEntry.get("queue_name"));
-            String currentStatus = "undefined";
+            jsonObject.put("messageId", messageId);
+            jsonObject.put("queue_name", currentValues.get("queue_name"));
 
-            if (publishedDate > 0) {
-                jsonObject.put("Published", df.format(new Date(publishedDate)));
-                currentStatus = MessageCounterKey.MessageCounterType.PUBLISH_COUNTER.getType();
+            if (compareAllStatuses) { // Omit data from out of scope values retrieved when comparing all columns
+                if (publishedDate <= minDate || publishedDate >= maxDate) {
+                    publishedDate = 0l;
+                }
+                if (deliveredDate <= minDate || deliveredDate >= maxDate) {
+                    deliveredDate = 0l;
+                }
+                if (acknowledgedDate <= minDate || acknowledgedDate >= maxDate) {
+                    acknowledgedDate = 0l;
+                }
             }
+            jsonObject.put("Published", publishedDate);
+            jsonObject.put("Delivered", deliveredDate);
+            jsonObject.put("Acknowledged", acknowledgedDate);
 
-            if (deliveredDate > 0) {
-                jsonObject.put("Delivered", df.format(new Date(deliveredDate)));
-                currentStatus = MessageCounterKey.MessageCounterType.DELIVER_COUNTER.getType();
-            }
-            if (acknowledgedDate > 0) {
-                jsonObject.put("Acknowledged", df.format(new Date(deliveredDate)));
-                currentStatus = MessageCounterKey.MessageCounterType.ACKNOWLEDGED_COUNTER.getType();
-            }
-            jsonObject.put("message_status", currentStatus);
             messageStatuses.put(jsonObject);
         }
         return messageStatuses.toString();
     }
 
     /**
+     * The message count for a given time range and given queue.
+     *
+     * @param queueName The queue name, if null all.
+     * @param minDate The min date.
+     * @param maxDate The max date
+     * @return Message count.
+     */
+    public Long getMessageStatusCount(String queueName, Long minDate, Long maxDate) {
+        String queueToRequest = null;
+        if (!"All".equals(queueName)) { // queueName null means All data
+            queueToRequest = queueName;
+        }
+
+        return messageCounter.getMessageStatusCounts(queueToRequest, minDate, maxDate);
+    }
+
+    /**
+     * Get message status change times for a given message status type.
+     *
+     * @param queueName The queue name, if null all.
+     * @param minDate The min date.
+     * @param maxDate The max date
+     * @param minMessageId The message retrieval lower boundary.
+     * @param limit The amout of messages to retrieve.
+     * @param messageCounterTypeValue The message status change type to retrieve data about.
+     * @return Map<MessageId  MessageStatusChangeTime>
+     */
+    public String getMessageStatusChangeTimes(String queueName, Long minDate, Long maxDate, Long minMessageId, Long limit, String messageCounterTypeValue) {
+        JSONArray messageStatuses = new JSONArray();
+
+        String queueToRequest = null;
+        if (!"All".equals(queueName)) { // queueName null means All data
+            queueToRequest = queueName;
+        }
+
+        MessageCounterKey.MessageCounterType messageCounterType = MessageCounterKey.MessageCounterType.PUBLISH_COUNTER;
+
+        if (MessageCounterKey.MessageCounterType.DELIVER_COUNTER.getType().equals(messageCounterTypeValue)) {
+            messageCounterType = MessageCounterKey.MessageCounterType.DELIVER_COUNTER;
+        } else if (MessageCounterKey.MessageCounterType.ACKNOWLEDGED_COUNTER.getType().equals(messageCounterTypeValue)) {
+            messageCounterType = MessageCounterKey.MessageCounterType.ACKNOWLEDGED_COUNTER;
+        }
+
+        Map<Long, Long> statusChanges = messageCounter.getMessageStatusChangeTimes(queueToRequest, minDate, maxDate, minMessageId, limit, messageCounterType);
+
+        for(Map.Entry<Long, Long> currentEntry : statusChanges.entrySet()) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("messageId", currentEntry.getKey());
+            jsonObject.put(messageCounterType.getType(), currentEntry.getValue() / 1000 * 1000);
+
+            messageStatuses.put(jsonObject);
+        }
+
+        return messageStatuses.toString();
+    }
+
+    /**
      * Get the configurations value for stats enabled.
-     * @return The stats enabled status
+     * @return The stats enabled status.
      */
     public Boolean isStatsEnabled() {
         return ClusterResourceHolder.getInstance().getClusterConfiguration().isStatsEnabled();
