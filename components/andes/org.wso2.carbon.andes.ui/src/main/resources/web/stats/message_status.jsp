@@ -10,7 +10,6 @@
 <script src="../yui/build/connection/connection-min.js" type="text/javascript"></script>
 <!--Local js includes-->
 <script src="js/stats.js" type="text/javascript"></script>
-<script src="js/paging.js" type="text/javascript"></script>
 
 <!DOCTYPE html>
 <html>
@@ -36,7 +35,7 @@ if(stub.isStatsEnabled()) {
 
 %>
 
-<body onload="statusInitializeAndLoad();">
+<body onload="loadMessagesWithDirectFiltering();">
 
 <h1>Message Statuses</h1>
 <br>
@@ -51,7 +50,7 @@ if(stub.isStatsEnabled()) {
     } else {
 %>
 
-Choose the Queue : <select id="queueSelect" onchange="statusInitializeAndLoad()">
+Choose the Queue : <select id="queueSelect" onchange="loadMessagesWithDirectFiltering()">
 <option value="All">All</option>
 <%
         if (queueList != null ) {
@@ -83,7 +82,7 @@ Choose the Queue : <select id="queueSelect" onchange="statusInitializeAndLoad()"
 </select>
 
 
-Choose duration : <select id="durationSelect" onchange="statusInitializeAndLoad()">
+Choose duration : <select id="durationSelect" onchange="loadMessagesWithDirectFiltering()">
 <option value="lastMinute">Last Minute</option>
 <option value="last10Minute">Last 10 Minutes</option>
 <option value="lastHour">Last Hour</option>
@@ -91,10 +90,13 @@ Choose duration : <select id="durationSelect" onchange="statusInitializeAndLoad(
 <option value="lastDay">Last Day</option>
 <option value="lastWeek">Last Week</option>
 <option value="All">All Time</option>
+<option value="Custom">Custom</option>
 </select>
 
 
-<br>
+<br><br>
+
+<div id="timeFilter"></div>
 
 <p id="countLabel"></p>
 

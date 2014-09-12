@@ -1,10 +1,13 @@
             var dataLimit = 10000;
             var chartData = [];
-            var pager;
+            var customTime = false;
             var currentPage = 1;
             var currentPageCount = 0;
             var pageEnder = [];
             var currentOutput = [];
+            var filteredByTime = false;
+            var startTimeMillis;
+            var endTimeMillis;
             pageEnder[0] = 0;
             pageEnder[1] = 0;
 
@@ -604,19 +607,7 @@
                     cell3.style.backgroundColor = backgroundColor;
                 }
                 loadMessageStatusCount();
-                //paginate();
 
-            }
-
-            function paginate() {
-                pager = new Pager('tftable', 3);
-                pager.init();
-                pager.showPageNav('pager', 'pageNavPosition');
-                pager.showPage(1);
-            }
-
-            function setNav() {
-                var pagerHtml = '<span onclick="' + pagerName + '.prev();" class="pg-normal"> &#171 Prev </span> | ';
             }
 
             function initialisePaging() {
@@ -654,9 +645,11 @@
                     success: function(o) {
                         var output = JSON.parse(o.responseText);
 
+                        if (output.length > 0) {
+
                             pageEnder[currentPage] = output[output.length - 1]["messageId"];
                             currentPageCount = output.length;
-
+                        }
                             if (currentPage == 1) {
                                 document.getElementById("prevButton").disabled = true;
                             }
@@ -674,13 +667,51 @@
                         }
                     }
                 };
-                var request = YAHOO.util.Connect.asyncRequest('POST', "load_message_statuses_ajaxprocessor.jsp", callback, "selectedQueue=" + selectedQueue + "&selectedDuration=" + selectedDuration + "&minMessageId=" + minMessageId + "&limit=" + pageLimit + "&compareAllStatuses=false" + "&type=input");
+                var request = YAHOO.util.Connect.asyncRequest('POST', "load_message_statuses_ajaxprocessor.jsp", callback, "selectedQueue=" + selectedQueue + "&selectedDuration=" + selectedDuration + "&minMessageId=" + minMessageId + "&limit=" + pageLimit + "&compareAllStatuses=false" + "&filteredByTime=" + filteredByTime + "&startTimeMillis=" + startTimeMillis + "&endTimeMillis=" + endTimeMillis + "&type=input");
 
             }
 
             function statusInitializeAndLoad() {
                 initialisePaging();
                 nextPage(false);
+            }
+
+            function loadMessagesWithDirectFiltering() {
+                var durationSelectList = document.getElementById("durationSelect");
+                var selectedDuration = durationSelectList.options[durationSelectList.selectedIndex].value;
+                var fromDate = document.getElementById("fromDate");
+                var toDate = document.getElementById("toDate");
+                var fromTime = document.getElementById("fromTime");
+                var toTime = document.getElementById("toTime");
+                var filterButton = document.getElementById("timeFilterButton");
+
+                var timeFilterHTML = "<form> Filter Message Published Time Range <br>From :<input id=\"fromDate\" type=\"date\"><input id = \"fromTime\" step=\"1\" type=\"time\">To :<input id=\"toDate\" type=\"date\"><input id = \"toTime\" step=\"1\" type=\"time\"></form><button id=\"timeFilterButton\" onclick=\"loadMessagesForRange()\">Filter</button><br><br>";
+
+                if(selectedDuration == "Custom") {
+
+                      document.getElementById("timeFilter").innerHTML = timeFilterHTML;
+//                    fromDate.value = "";
+//                    toDate.value = "";
+//                    fromTime.value = "";
+//                    toTime.value = "";
+//
+//                    fromDate.disabled = false;
+//                    toDate.disabled = false;
+//                    fromTime.disabled = false;
+//                    toTime.disabled = false;
+//                    filterButton.disabled = false;
+                } else {
+                    filteredByTime = false;
+
+                    document.getElementById("timeFilter").innerHTML = "";
+//                    fromDate.disabled = true;
+//                    toDate.disabled = true;
+//                    fromTime.disabled = true;
+//                    toTime.disabled = true;
+//                    filterButton.disabled = true;
+
+                    statusInitializeAndLoad();
+                }
             }
 
             function loadMessageStatusCount() {
@@ -694,7 +725,14 @@
                         var output = o.responseText;
                         var currentPageStart = (currentPage - 1) * 100;
 
-                         document.getElementById("countLabel").innerHTML = "Showing " + parseFloat(currentPageStart + 1) + " - " + parseFloat(currentPageStart + currentPageCount) + " of " + output;
+                        var countLabelValue;
+                        if (output == 0) {
+                            countLabelValue = "No messages for the given filter values.";
+                        } else {
+                            countLabelValue = "Showing " + parseFloat(currentPageStart + 1) + " - " + parseFloat(currentPageStart + currentPageCount) + " of " + output;
+                        }
+
+                         document.getElementById("countLabel").innerHTML = countLabelValue;
                     },
                     failure: function(o) {
                         if (o.responseText !== undefined) {
@@ -702,6 +740,18 @@
                         }
                     }
                 };
-                var request = YAHOO.util.Connect.asyncRequest('POST', "load_message_statuses_count_ajaxprocessor.jsp", callback, "selectedQueue=" + selectedQueue + "&selectedDuration=" + selectedDuration + "&type=input");
+                var request = YAHOO.util.Connect.asyncRequest('POST', "load_message_statuses_count_ajaxprocessor.jsp", callback, "selectedQueue=" + selectedQueue + "&selectedDuration=" + selectedDuration + "&filteredByTime=" + filteredByTime + "&startTimeMillis=" + startTimeMillis + "&endTimeMillis=" + endTimeMillis + "&type=input");
+
+            }
+
+            function loadMessagesForRange() {
+                var startTime = document.getElementById("fromDate").value + "T" + document.getElementById("fromTime").value + "Z";
+                var endTime = document.getElementById("toDate").value + "T" + document.getElementById("toTime").value + "Z";
+                var tz = new Date().getTimezoneOffset() * 60 * 1000;
+
+                startTimeMillis = new Date(startTime).getTime() + tz;
+                endTimeMillis = new Date(endTime).getTime() + tz;
+                filteredByTime = true;
+                statusInitializeAndLoad();
 
             }
